@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ABC Match - Learn & Play</title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>🌈 Learn & Play</h1>
+    </header>
+
+
+    <main class="game-page">
+
+        <h2>🔤 ABC Match</h2>
+
+        <p class="question-number">
+            Question <span id="questionNumber">1</span> of 5
+        </p>
+
+
+        <div class="question-card">
+
+            <img
+                id="questionImage"
+                src=""
+                alt="ABC Question"
+            >
+
+            <h3>
+                Which letter does this word start with?
+            </h3>
+
+        </div>
+
+
+        <div class="answer-container">
+
+            <button onclick="checkAnswer('F')">F</button>
+            <button onclick="checkAnswer('H')">H</button>
+            <button onclick="checkAnswer('I')">I</button>
+            <button onclick="checkAnswer('J')">J</button>
+            <button onclick="checkAnswer('M')">M</button>
+
+        </div>
+
+
+        <p id="feedback"></p>
+
+    </main>
+
+
+    <script>
+
+        /* =========================
+           ABC QUESTIONS
+        ========================= */
+
+        const questions = [
+
+            {
+                image: "assets/images/ABC/fish.jpg",
+                letter: "F"
+            },
+
+            {
+                image: "assets/images/ABC/icecream.jpg",
+                letter: "I"
+            },
+
+            {
+                image: "assets/images/ABC/juice.jpg",
+                letter: "J"
+            },
+
+            {
+                image: "assets/images/ABC/mango.jpg",
+                letter: "M"
+            },
+
+            {
+                image: "assets/images/ABC/house.jpg",
+                letter: "H"
+            }
+
+        ];
+
+
+        let currentQuestion = 0;
+        let score = 0;
+
+
+        /* =========================
+           SHUFFLE QUESTIONS
+        ========================= */
+
+        function shuffleQuestions() {
+
+            questions.sort(
+                () => Math.random() - 0.5
+            );
+
+        }
+
+
+        /* =========================
+           LOAD QUESTION
+        ========================= */
+
+        function loadQuestion() {
+
+            const question =
+                questions[currentQuestion];
+
+
+            document.getElementById(
+                "questionImage"
+            ).src = question.image;
+
+
+            document.getElementById(
+                "questionNumber"
+            ).textContent =
+                currentQuestion + 1;
+
+
+            document.getElementById(
+                "feedback"
+            ).textContent = "";
+
+        }
+
+
+        /* =========================
+           CHECK ANSWER
+        ========================= */
+
+        function checkAnswer(selectedLetter) {
+
+            const correctLetter =
+                questions[currentQuestion].letter;
+
+
+            const feedback =
+                document.getElementById(
+                    "feedback"
+                );
+
+
+            if (
+                selectedLetter ===
+                correctLetter
+            ) {
+
+                score++;
+
+                feedback.textContent =
+                    "🎉 Correct! Great job!";
+
+                feedback.className =
+                    "correct";
+
+            }
+
+            else {
+
+                feedback.textContent =
+                    "❌ Not quite! The correct answer is "
+                    + correctLetter;
+
+                feedback.className =
+                    "wrong";
+
+            }
+
+
+            /* Disable buttons temporarily */
+
+            const buttons =
+                document.querySelectorAll(
+                    ".answer-container button"
+                );
+
+
+            buttons.forEach(
+                button => {
+                    button.disabled = true;
+                }
+            );
+
+
+            setTimeout(
+                nextQuestion,
+                1200
+            );
+
+        }
+
+
+        /* =========================
+           NEXT QUESTION
+        ========================= */
+
+        function nextQuestion() {
+
+            currentQuestion++;
+
+
+            if (
+                currentQuestion >=
+                questions.length
+            ) {
+
+                showResult();
+
+                return;
+
+            }
+
+
+            const buttons =
+                document.querySelectorAll(
+                    ".answer-container button"
+                );
+
+
+            buttons.forEach(
+                button => {
+                    button.disabled = false;
+                }
+            );
+
+
+            loadQuestion();
+
+        }
+
+
+        /* =========================
+           SHOW RESULT
+        ========================= */
+
+        function showResult() {
+
+            document.querySelector(
+                ".game-page"
+            ).innerHTML = `
+
+                <div class="result-card">
+
+                    <h2>🎉 Great Job!</h2>
+
+                    <p class="final-score">
+                        You scored
+                        ${score}
+                        /
+                        ${questions.length}
+                    </p>
+
+                    <p>
+                        ⭐ Keep learning
+                        and playing!
+                    </p>
+
+                    <a
+                        href="abc.html"
+                        class="play-again"
+                    >
+                        🔄 Play Again
+                    </a>
+
+                    <br>
+
+                    <a
+                        href="games.html"
+                        class="back-button"
+                    >
+                        🎮 Choose Another Game
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =========================
+           START GAME
+        ========================= */
+
+        shuffleQuestions();
+
+        loadQuestion();
+
+    </script>
+     /* =========================
+           START
+        ========================= */
+
+
+        shuffle(questions);
+
+        loadQuestion();
+
+
+    </script>
+    <script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+            navigator.serviceWorker.register("service-worker.js");
+        });
+    }
+    </script>
+
+</body>
+
+</html>

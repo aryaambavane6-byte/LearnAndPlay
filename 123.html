@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>123 Number Match - Learn & Play</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
+    <link 
+        rel="manifest" 
+        href="manifest.json"
+    >
+</head>
+
+
+<body>
+
+    <header class="header">
+
+        <h1>
+            🌈 Learn & Play
+        </h1>
+
+    </header>
+
+
+    <main class="number-page">
+
+        <h2>
+            🔢 123 Number Match
+        </h2>
+
+
+        <p class="question-number">
+
+            Question
+            <span id="questionNumber">
+                1
+            </span>
+            of 5
+
+        </p>
+
+
+        <div class="number-question">
+
+            <div
+                id="objects"
+                class="objects"
+            >
+            </div>
+
+
+            <h3 id="questionText">
+                How many objects do you see?
+            </h3>
+
+        </div>
+
+
+        <div
+            id="numberOptions"
+            class="number-options"
+        >
+        </div>
+
+
+        <p
+            id="numberFeedback"
+            class="number-feedback"
+        >
+        </p>
+
+    </main>
+
+
+    <script>
+
+
+        /* =========================
+           QUESTIONS
+        ========================= */
+
+
+        const questions = [
+
+            {
+                object: "🍎",
+                name: "apples",
+                count: 3
+            },
+
+            {
+                object: "🐶",
+                name: "dogs",
+                count: 5
+            },
+
+            {
+                object: "⭐",
+                name: "stars",
+                count: 2
+            },
+
+            {
+                object: "🌸",
+                name: "flowers",
+                count: 4
+            },
+
+            {
+                object: "🐟",
+                name: "fish",
+                count: 6
+            }
+
+        ];
+
+
+        let currentQuestion = 0;
+
+        let score = 0;
+
+
+        /* =========================
+           SHUFFLE
+        ========================= */
+
+
+        function shuffle(array) {
+
+            array.sort(
+                () =>
+                    Math.random() - 0.5
+            );
+
+        }
+
+
+        /* =========================
+           SHOW OBJECTS
+        ========================= */
+
+
+        function showObjects() {
+
+            const container =
+                document.getElementById(
+                    "objects"
+                );
+
+
+            container.innerHTML = "";
+
+
+            const question =
+                questions[currentQuestion];
+
+
+            for (
+                let i = 0;
+                i < question.count;
+                i++
+            ) {
+
+                const object =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                object.textContent =
+                    question.object;
+
+
+                container.appendChild(
+                    object
+                );
+
+            }
+
+        }
+
+
+        /* =========================
+           SHOW OPTIONS
+        ========================= */
+
+
+        function showOptions() {
+
+            const container =
+                document.getElementById(
+                    "numberOptions"
+                );
+
+
+            container.innerHTML = "";
+
+
+            const correct =
+                questions[
+                    currentQuestion
+                ].count;
+
+
+            let options = [
+
+                correct,
+
+                correct + 1,
+
+                correct - 1,
+
+                correct + 2
+
+            ];
+
+
+            /* Remove numbers below 1 */
+
+            options =
+                options.filter(
+                    number => number >= 1
+                );
+
+
+            /* Remove duplicates */
+
+            options =
+                [...new Set(options)];
+
+
+            /* Shuffle options */
+
+            shuffle(options);
+
+
+            options.forEach(
+                function(number) {
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    button.textContent =
+                        number;
+
+
+                    button.onclick =
+                        function() {
+
+                            checkAnswer(
+                                number
+                            );
+
+                        };
+
+
+                    container.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =========================
+           LOAD QUESTION
+        ========================= */
+
+
+        function loadQuestion() {
+
+            document.getElementById(
+                "questionNumber"
+            ).textContent =
+                currentQuestion + 1;
+
+
+            document.getElementById(
+                "numberFeedback"
+            ).textContent = "";
+
+
+            const question =
+                questions[currentQuestion];
+
+
+            /* Change question according
+               to the emoji */
+
+            document.getElementById(
+                "questionText"
+            ).textContent =
+                "How many " +
+                question.name +
+                " do you see?";
+
+
+            showObjects();
+
+            showOptions();
+
+        }
+
+
+        /* =========================
+           CHECK ANSWER
+        ========================= */
+
+
+        function checkAnswer(answer) {
+
+            const correct =
+                questions[
+                    currentQuestion
+                ].count;
+
+
+            const feedback =
+                document.getElementById(
+                    "numberFeedback"
+                );
+
+
+            if (
+                answer === correct
+            ) {
+
+                score++;
+
+
+                feedback.textContent =
+                    "🎉 Correct! Great job!";
+
+
+                feedback.className =
+                    "number-feedback correct";
+
+            }
+
+            else {
+
+                feedback.textContent =
+                    "❌ Not quite! The correct answer is "
+                    + correct;
+
+
+                feedback.className =
+                    "number-feedback wrong";
+
+            }
+
+
+            /* Disable buttons */
+
+            const buttons =
+                document.querySelectorAll(
+                    "#numberOptions button"
+                );
+
+
+            buttons.forEach(
+                button => {
+
+                    button.disabled = true;
+
+                }
+            );
+
+
+            setTimeout(
+                nextQuestion,
+                1200
+            );
+
+        }
+
+
+        /* =========================
+           NEXT QUESTION
+        ========================= */
+
+
+        function nextQuestion() {
+
+            currentQuestion++;
+
+
+            if (
+                currentQuestion >=
+                questions.length
+            ) {
+
+                showResult();
+
+                return;
+
+            }
+
+
+            loadQuestion();
+
+        }
+
+
+        /* =========================
+           RESULT
+        ========================= */
+
+
+        function showResult() {
+
+            document.querySelector(
+                ".number-page"
+            ).innerHTML = `
+
+                <div
+                    class="result-card"
+                >
+
+                    <h2>
+                        🎉 Amazing!
+                    </h2>
+
+
+                    <p
+                        class="final-score"
+                    >
+
+                        You scored
+                        ${score}
+                        /
+                        ${questions.length}
+
+                    </p>
+
+
+                    <p>
+                        ⭐ Keep counting!
+                    </p>
+
+
+                    <button
+                        onclick="location.reload()"
+                    >
+                        🔄 Play Again
+                    </button>
+
+
+                    <br><br>
+
+
+                    <a
+                        href="games.html"
+                        class="back-button"
+                    >
+                        🎮 Choose Another Game
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =========================
+           START
+        ========================= */
+
+
+        shuffle(questions);
+
+        loadQuestion();
+
+
+    </script>
+
+
+    <!-- SERVICE WORKER -->
+
+    <script>
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener(
+                "load",
+                function () {
+
+                    navigator.serviceWorker.register(
+                        "service-worker.js"
+                    );
+
+                }
+            );
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

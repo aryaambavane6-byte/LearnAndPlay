@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Number Sequence - Learn & Play</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
+    <link rel="manifest" href="manifest.json">
+
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <h1>🌈 Learn & Play</h1>
+
+    </header>
+
+
+    <!-- GAME -->
+
+    <main class="sequence-page">
+
+        <h2>🔢 Number Sequence</h2>
+
+
+        <p class="question-number">
+
+            Question
+            <span id="questionNumber">1</span>
+            of 5
+
+        </p>
+
+
+        <div class="sequence-question">
+
+            <p id="sequenceDisplay">
+            </p>
+
+            <h3>
+                Which number comes next?
+            </h3>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div
+            id="sequenceOptions"
+            class="sequence-options"
+        >
+        </div>
+
+
+        <!-- FEEDBACK -->
+
+        <p
+            id="sequenceFeedback"
+            class="sequence-feedback"
+        >
+        </p>
+
+    </main>
+
+
+    <script>
+
+
+        /* =========================
+           QUESTIONS
+        ========================= */
+
+
+        const questions = [
+
+            {
+                sequence: [
+                    1,
+                    2,
+                    3,
+                    "?"
+                ],
+
+                answer: 4
+
+            },
+
+
+            {
+                sequence: [
+                    2,
+                    3,
+                    4,
+                    "?"
+                ],
+
+                answer: 5
+
+            },
+
+
+            {
+                sequence: [
+                    5,
+                    6,
+                    7,
+                    "?"
+                ],
+
+                answer: 8
+
+            },
+
+
+            {
+                sequence: [
+                    7,
+                    8,
+                    9,
+                    "?"
+                ],
+
+                answer: 10
+
+            },
+
+
+            {
+                sequence: [
+                    10,
+                    11,
+                    12,
+                    "?"
+                ],
+
+                answer: 13
+
+            }
+
+        ];
+
+
+        let currentQuestion = 0;
+
+        let score = 0;
+
+
+        /* =========================
+           SHUFFLE
+        ========================= */
+
+
+        function shuffle(array) {
+
+            array.sort(
+                () =>
+                    Math.random() - 0.5
+            );
+
+        }
+
+
+        /* =========================
+           LOAD QUESTION
+        ========================= */
+
+
+        function loadQuestion() {
+
+
+            const question =
+                questions[currentQuestion];
+
+
+            document.getElementById(
+                "questionNumber"
+            ).textContent =
+                currentQuestion + 1;
+
+
+            /* Show sequence */
+
+            const display =
+                document.getElementById(
+                    "sequenceDisplay"
+                );
+
+
+            display.innerHTML = "";
+
+
+            question.sequence.forEach(
+                function(number) {
+
+
+                    const span =
+                        document.createElement(
+                            "span"
+                        );
+
+
+                    span.textContent =
+                        number;
+
+
+                    display.appendChild(
+                        span
+                    );
+
+
+                }
+            );
+
+
+            /* Clear feedback */
+
+            document.getElementById(
+                "sequenceFeedback"
+            ).textContent = "";
+
+
+            /* Create options */
+
+            createOptions();
+
+        }
+
+
+        /* =========================
+           CREATE OPTIONS
+        ========================= */
+
+
+        function createOptions() {
+
+
+            const correct =
+                questions[
+                    currentQuestion
+                ].answer;
+
+
+            let options = [
+
+                correct,
+
+                correct - 1,
+
+                correct + 1,
+
+                correct + 2
+
+            ];
+
+
+            options =
+                options.filter(
+                    number => number > 0
+                );
+
+
+            options =
+                [...new Set(options)];
+
+
+            shuffle(options);
+
+
+            const container =
+                document.getElementById(
+                    "sequenceOptions"
+                );
+
+
+            container.innerHTML = "";
+
+
+            options.forEach(
+                function(number) {
+
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    button.textContent =
+                        number;
+
+
+                    button.onclick =
+                        function() {
+
+                            checkAnswer(
+                                number
+                            );
+
+                        };
+
+
+                    container.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =========================
+           CHECK ANSWER
+        ========================= */
+
+
+        function checkAnswer(answer) {
+
+
+            const correct =
+                questions[
+                    currentQuestion
+                ].answer;
+
+
+            const feedback =
+                document.getElementById(
+                    "sequenceFeedback"
+                );
+
+
+            if (
+                answer === correct
+            ) {
+
+
+                score++;
+
+
+                feedback.textContent =
+                    "🎉 Correct! Great job!";
+
+
+                feedback.className =
+                    "sequence-feedback correct";
+
+
+            }
+
+            else {
+
+
+                feedback.textContent =
+                    "❌ Not quite! The correct answer is "
+                    + correct;
+
+
+                feedback.className =
+                    "sequence-feedback wrong";
+
+            }
+
+
+            /* Disable buttons */
+
+            const buttons =
+                document.querySelectorAll(
+                    "#sequenceOptions button"
+                );
+
+
+            buttons.forEach(
+                button => {
+
+                    button.disabled = true;
+
+                }
+            );
+
+
+            setTimeout(
+                nextQuestion,
+                1200
+            );
+
+        }
+
+
+        /* =========================
+           NEXT QUESTION
+        ========================= */
+
+
+        function nextQuestion() {
+
+
+            currentQuestion++;
+
+
+            if (
+                currentQuestion >=
+                questions.length
+            ) {
+
+
+                showResult();
+
+                return;
+
+            }
+
+
+            loadQuestion();
+
+        }
+
+
+        /* =========================
+           RESULT
+        ========================= */
+
+
+        function showResult() {
+
+
+            document.querySelector(
+                ".sequence-page"
+            ).innerHTML = `
+
+                <div
+                    class="result-card"
+                >
+
+                    <h2>
+                        🎉 Amazing!
+                    </h2>
+
+
+                    <p
+                        class="final-score"
+                    >
+
+                        You scored
+                        ${score}
+                        /
+                        ${questions.length}
+
+                    </p>
+
+
+                    <p>
+                        ⭐ You are great at numbers!
+                    </p>
+
+
+                    <button
+                        onclick="location.reload()"
+                    >
+                        🔄 Play Again
+                    </button>
+
+
+                    <br><br>
+
+
+                    <a
+                        href="games.html"
+                        class="back-button"
+                    >
+                        🎮 Choose Another Game
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =========================
+           START GAME
+        ========================= */
+
+
+        shuffle(questions);
+
+        loadQuestion();
+
+
+    </script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function () {
+                navigator.serviceWorker.register("service-worker.js");
+            });
+        }
+    </script>
+</body>
+
+</html>

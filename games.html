@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Choose a Game - Learn & Play</title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>🌈 Learn & Play</h1>
+    </header>
+
+
+    <main class="games-page">
+
+        <h2>🎮 Choose a Game</h2>
+
+        <p class="game-subtitle">
+            Pick a game and let's have some fun!
+        </p>
+
+
+        <div class="games-container">
+
+            <a href="abc.html" class="game-card">
+                <span class="game-icon">🔤</span>
+                <span>ABC Match</span>
+            </a>
+
+
+            <a href="123.html" class="game-card">
+                <span class="game-icon">🔢</span>
+                <span>123 Number Match</span>
+            </a>
+
+
+            <a href="memory.html" class="game-card">
+                <span class="game-icon">🧠</span>
+                <span>Memory Match</span>
+            </a>
+
+
+            <a href="color.html" class="game-card">
+                <span class="game-icon">🎨</span>
+                <span>Color Match</span>
+            </a>
+
+
+            <a href="animals.html" class="game-card">
+                <span class="game-icon">🐶</span>
+                <span>Animal Match</span>
+            </a>
+
+
+            <a href="sequence.html" class="game-card">
+                <span class="game-icon">🔢</span>
+                <span>Number Sequence</span>
+            </a>
+
+        </div>
+
+
+        <a href="index.html" class="back-button">
+            🏠 Back to Home
+        </a>
+
+    </main>
+
+
+    <footer class="footer">
+        <p>🌟 Learn something new every day! 🌟</p>
+    </footer>
+    <script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+            navigator.serviceWorker.register("service-worker.js");
+        });
+    }
+</script>
+</body>
+
+</html>

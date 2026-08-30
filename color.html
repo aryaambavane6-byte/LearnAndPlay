@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Color Match - Learn & Play</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
+    <link rel="manifest" href="manifest.json">
+
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <h1>🌈 Learn & Play</h1>
+
+    </header>
+
+
+    <!-- GAME -->
+
+    <main class="color-page">
+
+        <h2>🎨 Color Match</h2>
+
+        <p class="question-number">
+
+            Question
+            <span id="questionNumber">1</span>
+            of 5
+
+        </p>
+
+
+        <!-- COLOR -->
+
+        <div class="color-question">
+
+            <div
+                id="colorBox"
+                class="color-box"
+            >
+            </div>
+
+
+            <h3>
+                Which color is this?
+            </h3>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div
+            id="colorOptions"
+            class="color-options"
+        >
+        </div>
+
+
+        <!-- FEEDBACK -->
+
+        <p
+            id="colorFeedback"
+            class="color-feedback"
+        >
+        </p>
+
+    </main>
+
+
+    <script>
+
+        /* =========================
+           COLORS
+        ========================= */
+
+        const colors = [
+
+            {
+                name: "Red",
+                value: "red"
+            },
+
+            {
+                name: "Blue",
+                value: "blue"
+            },
+
+            {
+                name: "Green",
+                value: "green"
+            },
+
+            {
+                name: "Yellow",
+                value: "yellow"
+            },
+
+            {
+                name: "Orange",
+                value: "orange"
+            }
+
+        ];
+
+
+        let currentQuestion = 0;
+
+        let score = 0;
+
+
+        /* =========================
+           SHUFFLE
+        ========================= */
+
+        function shuffle(array) {
+
+            array.sort(
+                () =>
+                    Math.random() - 0.5
+            );
+
+        }
+
+
+        /* =========================
+           LOAD QUESTION
+        ========================= */
+
+        function loadQuestion() {
+
+            const question =
+                colors[currentQuestion];
+
+
+            document.getElementById(
+                "questionNumber"
+            ).textContent =
+                currentQuestion + 1;
+
+
+            /* Show color */
+
+            document.getElementById(
+                "colorBox"
+            ).style.backgroundColor =
+                question.value;
+
+
+            /* Clear feedback */
+
+            document.getElementById(
+                "colorFeedback"
+            ).textContent = "";
+
+
+            /* Create options */
+
+            const options =
+                [...colors];
+
+
+            shuffle(options);
+
+
+            const container =
+                document.getElementById(
+                    "colorOptions"
+                );
+
+
+            container.innerHTML = "";
+
+
+            options.forEach(
+                function(color) {
+
+
+                    const button =
+                        document.createElement(
+                            "button"
+                        );
+
+
+                    button.textContent =
+                        color.name;
+
+
+                    button.onclick =
+                        function() {
+
+                            checkAnswer(
+                                color.name
+                            );
+
+                        };
+
+
+                    container.appendChild(
+                        button
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =========================
+           CHECK ANSWER
+        ========================= */
+
+        function checkAnswer(answer) {
+
+            const correct =
+                colors[
+                    currentQuestion
+                ].name;
+
+
+            const feedback =
+                document.getElementById(
+                    "colorFeedback"
+                );
+
+
+            if (
+                answer === correct
+            ) {
+
+                score++;
+
+
+                feedback.textContent =
+                    "🎉 Correct! Great job!";
+
+
+                feedback.className =
+                    "color-feedback correct";
+
+            }
+
+            else {
+
+                feedback.textContent =
+                    "❌ Not quite! The correct answer is "
+                    + correct;
+
+
+                feedback.className =
+                    "color-feedback wrong";
+
+            }
+
+
+            /* Disable buttons */
+
+            const buttons =
+                document.querySelectorAll(
+                    "#colorOptions button"
+                );
+
+
+            buttons.forEach(
+                button => {
+
+                    button.disabled = true;
+
+                }
+            );
+
+
+            setTimeout(
+                nextQuestion,
+                1200
+            );
+
+        }
+
+
+        /* =========================
+           NEXT QUESTION
+        ========================= */
+
+        function nextQuestion() {
+
+            currentQuestion++;
+
+
+            if (
+                currentQuestion >=
+                colors.length
+            ) {
+
+                showResult();
+
+                return;
+
+            }
+
+
+            loadQuestion();
+
+        }
+
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        function showResult() {
+
+            document.querySelector(
+                ".color-page"
+            ).innerHTML = `
+
+                <div
+                    class="result-card"
+                >
+
+                    <h2>
+                        🎉 Amazing!
+                    </h2>
+
+
+                    <p
+                        class="final-score"
+                    >
+
+                        You scored
+                        ${score}
+                        /
+                        ${colors.length}
+
+                    </p>
+
+
+                    <p>
+                        🌈 Keep learning
+                        colors!
+                    </p>
+
+
+                    <button
+                        onclick="location.reload()"
+                    >
+                        🔄 Play Again
+                    </button>
+
+
+                    <br><br>
+
+
+                    <a
+                        href="games.html"
+                        class="back-button"
+                    >
+                        🎮 Choose Another Game
+                    </a>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =========================
+           START
+        ========================= */
+
+        shuffle(colors);
+
+        loadQuestion();
+
+    </script>
+    <script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+            navigator.serviceWorker.register("service-worker.js");
+        });
+    }
+    </script>
+
+
+</body>
+
+</html>
