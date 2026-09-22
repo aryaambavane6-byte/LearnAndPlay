@@ -1,4 +1,4 @@
-const CACHE_NAME = "learn-play-v5";
+const CACHE_NAME = "learn-play-v6";
 
 const FILES_TO_CACHE = [
 
