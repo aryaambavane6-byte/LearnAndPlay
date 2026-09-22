@@ -302,24 +302,31 @@
         loadQuestion();
 
     </script>
-     /* =========================
-           START
+
+
+    <script>
+
+        /* =========================
+           SERVICE WORKER
         ========================= */
 
+        if ("serviceWorker" in navigator) {
 
-        shuffle(questions);
+            window.addEventListener(
+                "load",
+                function () {
 
-        loadQuestion();
+                    navigator.serviceWorker.register(
+                        "service-worker.js"
+                    );
 
+                }
+            );
+
+        }
 
     </script>
-    <script>
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", function () {
-            navigator.serviceWorker.register("service-worker.js");
-        });
-    }
-    </script>
+
 
 </body>
 
