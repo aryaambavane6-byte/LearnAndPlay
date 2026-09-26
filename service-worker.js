@@ -1,4 +1,4 @@
-const CACHE_NAME = "learn-play-v6s";
+const CACHE_NAME = "learn-play-v7";
 
 const FILES_TO_CACHE = [
 
@@ -15,18 +15,14 @@ const FILES_TO_CACHE = [
     "animals.html",
     "sequence.html",
 
-
     /* =========================
        PWA FILES
     ========================= */
 
     "manifest.json",
-
     "assets/css/style.css",
-
     "assets/icon/icon-192.png",
     "assets/icon/icon-512.png",
-
 
     /* =========================
        ABC IMAGES
@@ -42,7 +38,6 @@ const FILES_TO_CACHE = [
     "assets/images/ABC/icecream.jpg",
     "assets/images/ABC/juice.jpg",
     "assets/images/ABC/mango.jpg",
-
 
     /* =========================
        ANIMAL IMAGES
@@ -66,87 +61,137 @@ const FILES_TO_CACHE = [
    INSTALL
 ========================= */
 
-self.addEventListener(
-    "install",
-    event => {
+self.addEventListener("install", event => {
 
-        event.waitUntil(
+    self.skipWaiting();
 
-            caches.open(CACHE_NAME)
-                .then(cache => {
+    event.waitUntil(
 
-                    return cache.addAll(
-                        FILES_TO_CACHE
-                    );
+        caches.open(CACHE_NAME)
+            .then(cache => {
 
-                })
+                return cache.addAll(
+                    FILES_TO_CACHE
+                );
 
-        );
+            })
 
-    }
-);
+    );
+
+});
 
 
 /* =========================
    ACTIVATE
 ========================= */
 
-self.addEventListener(
-    "activate",
-    event => {
+self.addEventListener("activate", event => {
 
-        event.waitUntil(
+    event.waitUntil(
 
-            caches.keys()
-                .then(keys => {
+        caches.keys()
+            .then(keys => {
 
-                    return Promise.all(
+                return Promise.all(
 
-                        keys
-                            .filter(
-                                key =>
-                                    key !== CACHE_NAME
-                            )
-                            .map(
-                                key =>
-                                    caches.delete(key)
-                            )
+                    keys
+                        .filter(
+                            key =>
+                                key !== CACHE_NAME
+                        )
+                        .map(
+                            key =>
+                                caches.delete(key)
+                        )
 
-                    );
+                );
 
-                })
+            })
 
-        );
+    );
 
-    }
-);
+    clients.claim();
+
+});
 
 
 /* =========================
    FETCH
 ========================= */
 
-self.addEventListener(
-    "fetch",
-    event => {
+self.addEventListener("fetch", event => {
+
+    /* Only handle GET requests */
+    if (event.request.method !== "GET") {
+        return;
+    }
+
+
+    /* =========================
+       HTML PAGES
+       Network First
+    ========================= */
+
+    if (
+        event.request.mode === "navigate" ||
+        event.request.destination === "document"
+    ) {
 
         event.respondWith(
 
-            caches.match(
-                event.request
-            )
-            .then(
-                cachedResponse => {
+            fetch(event.request)
 
-                    return (
-                        cachedResponse ||
-                        fetch(event.request)
+                .then(response => {
+
+                    const responseClone =
+                        response.clone();
+
+                    caches.open(CACHE_NAME)
+                        .then(cache => {
+
+                            cache.put(
+                                event.request,
+                                responseClone
+                            );
+
+                        });
+
+                    return response;
+
+                })
+
+                .catch(() => {
+
+                    return caches.match(
+                        event.request
                     );
 
-                }
-            )
+                })
 
         );
 
+        return;
     }
-);
+
+
+    /* =========================
+       OTHER FILES
+       Cache First
+    ========================= */
+
+    event.respondWith(
+
+        caches.match(event.request)
+
+            .then(cachedResponse => {
+
+                return (
+                    cachedResponse ||
+                    fetch(event.request)
+                );
+
+            })
+
+    );
+
+});
